@@ -1,0 +1,90 @@
+{
+    "type": "record",
+    "name": "CustomerKafkaPayload",
+    "namespace": "br.com.abg.kafka.schema.customer",
+    "fields": [
+        {
+            "name": "address",
+            "type": [
+                "null",
+                {
+                    "type": "record",
+                    "name": "Address",
+                    "namespace": "br.com.abg.kafka.schema.customer.CustomerKafkaPayload$",
+                    "fields": [
+                        {
+                            "name": "city",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        {
+                            "name": "neighborhood",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        {
+                            "name": "number",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        {
+                            "name": "state",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        {
+                            "name": "street",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        {
+                            "name": "zipCode",
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "bornDate",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "document",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "name",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "phone",
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    ]
+}

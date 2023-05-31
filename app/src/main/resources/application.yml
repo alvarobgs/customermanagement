@@ -1,0 +1,42 @@
+spring:
+  application.name: CustomerManagementApp
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/customer?useSSL=false&useTimezone=true&serverTimezone=America/Sao_Paulo&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: MYSQL
+    show-sql: false
+    open-in-view: true
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        ddl-auto: update
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect
+
+management:
+  endpoints.web.exposure.include: metrics,health,info,prometheus
+  metrics.export.prometheus.enabled: true
+
+logging.level:
+  org.apache.catalina.core.ContainerBase.*: WARN
+  org.springframework.web.servlet.DispatcherServlet: WARN
+  org.zalando.logbook: TRACE
+
+endpoint:
+  zipcode-ws: https://viacep.com.br/ws
+
+spring.kafka.producer:
+  bootstrap-servers: 127.0.0.1:9092
+  key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  group-id: group_id
+
+kafka:
+  topicname:
+    newcustomer: teste
+
