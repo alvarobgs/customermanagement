@@ -45,3 +45,5 @@ kafka:
   topicname:
     newcustomer: newcustomer-event-topic
 
+toggle:
+  enable-kafka-publish: true

@@ -11,6 +11,7 @@ import br.com.abg.domain.service.customer.CustomerService
 import br.com.abg.domain.service.zipcode.ZipCodeService
 import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,7 +30,7 @@ class CreateCustomerUseCase(
         return runCatching {
             customerService.persist(customer.mapToCustomer(completeAddress))
         }.onSuccess {
-//            customerProducer.produce(it.mapToCustomerKafkaPayload())
+            customerProducer.produce(it.mapToCustomerKafkaPayload())
         }.onFailure {
             if (it.cause is ConstraintViolationException) {
                 throw InvalidArgumentException(Messages.findByKey("document.in.use.error", Messages.Language.PT))

@@ -10,19 +10,24 @@ import org.springframework.stereotype.Service
 @Service
 class CustomerProducerImpl(
     private val kafkaTemplate: KafkaTemplate<String, CustomerKafkaPayload>,
-    @Value("\${kafka.topicname.newcustomer}") private val topicName: String
+    @Value("\${kafka.topicname.newcustomer}") private val topicName: String,
+    @Value("\${toggle.enable-kafka-publish:false}") private val enablePublishToggle: Boolean
 ) : CustomerProducer {
 
     private val logger = LoggerFactory.getLogger(CustomerProducerImpl::class.java)
     override fun produce(payload: CustomerKafkaPayload) {
-        logger.info("Starting process to send message on kafka topic $topicName")
+        if (!enablePublishToggle) {
+            logger.warn("Toggle disabled, skiping kafka ")
+            return
+        }
+        logger.info("Starting process to produce message on kafka topic $topicName")
 
         runCatching {
             kafkaTemplate.send(topicName, payload).get()
         }.onSuccess {
-            logger.info("Successfully sent message on kafka topic $topicName")
+            logger.info("Successfully produced message on kafka topic $topicName")
         }.onFailure {
-           logger.error("Failed to sent message on kafka topic $topicName", it)
+           logger.error("Failed to produce message on kafka topic $topicName", it)
         }
     }
 }
