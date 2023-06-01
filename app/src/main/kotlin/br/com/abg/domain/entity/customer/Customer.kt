@@ -18,21 +18,21 @@ class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    var id: Long? = null
 
     @Column(name = "name", nullable = false, length = 80)
-    val name: String? = null
+    var name: String? = null
 
     @Column(name = "document", nullable = false, unique = true, length = 20)
-    val document: String? = null
+    var document: String? = null
 
     @Column(name = "phone", nullable = false, length = 20)
-    val phone: String? = null
+    var phone: String? = null
 
     @Column(name = "born_date", nullable = false)
-    val bornDate: LocalDate? = null
+    var bornDate: LocalDate? = null
 
     @OneToOne(cascade = [ CascadeType.ALL ], orphanRemoval = true)
     @JoinColumn(name = "address_id", foreignKey = ForeignKey(name = "fk_customer_address"))
-    val address: Address? = null
+    var address: Address? = null
 }

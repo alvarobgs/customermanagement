@@ -5,7 +5,6 @@ import br.com.abg.domain.adapter.input.rest.controller.customer.model.response.C
 import br.com.abg.domain.adapter.input.rest.controller.customer.model.response.FindCustomerByDocumentResponse
 import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToCreateCustomerResponse
 import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToFindCustomerByDocumentResponse
-import br.com.abg.domain.tools.AvroGen
 import br.com.abg.domain.usecase.customer.CreateCustomerUseCase
 import br.com.abg.domain.usecase.customer.FindCustomerUseCase
 import org.springframework.http.HttpStatus
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDateTime
 
 @Validated
 @RestController

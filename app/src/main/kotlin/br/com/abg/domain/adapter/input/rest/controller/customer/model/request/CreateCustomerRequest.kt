@@ -13,6 +13,7 @@ data class CreateCustomerRequest(
     val address: Address
 ) {
     data class Address(
-        val zipCode: String
+        val zipCode: String,
+        val number: String
     )
 }

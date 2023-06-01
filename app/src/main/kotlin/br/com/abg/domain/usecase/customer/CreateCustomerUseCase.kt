@@ -2,6 +2,7 @@ package br.com.abg.domain.usecase.customer
 
 import br.com.abg.domain.adapter.input.rest.controller.customer.model.request.CreateCustomerRequest
 import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToCustomer
+import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToCustomerKafkaPayload
 import br.com.abg.domain.adapter.output.kafka.producer.customer.CustomerProducer
 import br.com.abg.domain.entity.customer.Customer
 import br.com.abg.domain.service.customer.CustomerService
@@ -23,7 +24,7 @@ class CreateCustomerUseCase(
         val completeAddress = zipCodeService.fetchAddressByZipCode(customer.address.zipCode)
 
         return customerService.persist(customer.mapToCustomer(completeAddress)).also {
-            customerProducer.produce("")
+            customerProducer.produce(it.mapToCustomerKafkaPayload())
         }
     }
 }

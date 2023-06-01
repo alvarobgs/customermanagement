@@ -13,23 +13,23 @@ class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    var id: Long? = null
 
     @Column(name = "zip_code", nullable = false, length = 8)
-    val zipCode: String? = null
+    var zipCode: String? = null
 
     @Column(name = "number", nullable = false, length = 10)
-    val number: String? = null
+    var number: String? = null
 
     @Column(name = "street", nullable = false, length = 255)
-    val street: String? = null
+    var street: String? = null
 
     @Column(name = "neighborhood", nullable = false, length = 50)
-    val neighborhood: String? = null
+    var neighborhood: String? = null
 
     @Column(name = "city", nullable = false, length = 50)
-    val city: String? = null
+    var city: String? = null
 
     @Column(name = "state", nullable = false, length = 2)
-    val state: String? = null
+    var state: String? = null
 }
