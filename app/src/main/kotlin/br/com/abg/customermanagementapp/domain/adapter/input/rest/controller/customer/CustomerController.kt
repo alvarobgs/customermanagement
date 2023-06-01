@@ -8,6 +8,8 @@ import br.com.abg.customermanagementapp.domain.adapter.input.rest.mapper.custome
 import br.com.abg.customermanagementapp.domain.usecase.customer.CreateCustomerUseCase
 import br.com.abg.customermanagementapp.domain.usecase.customer.FindCustomerUseCase
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Validated
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 class CustomerController(
     private val createCustomerUseCase: CreateCustomerUseCase,
     private val findCustomerUseCase: FindCustomerUseCase
@@ -28,7 +30,7 @@ class CustomerController(
 
     @GetMapping
     fun findCustomerByDocument(
-        @RequestParam(name = "document") document: String
+        @RequestParam(name = "document") @NotBlank @Pattern(regexp = "[0-9]{11}") document: String
     ): ResponseEntity<FindCustomerByDocumentResponse> {
 
         return findCustomerUseCase.execute(document)?.let {

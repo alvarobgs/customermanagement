@@ -5,6 +5,7 @@ import br.com.abg.customermanagementapp.domain.exceptions.InvalidArgumentExcepti
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
+import jakarta.validation.ConstraintViolationException
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.TypeMismatchException
@@ -73,6 +74,20 @@ class DefaultExceptionHandler {
             message = Messages.findByKey("invalid.input.parameter"),
             description = "${e.name}: ${e.value}"
         )
+
+        return ResponseEntity.badRequest().body(RestExceptionResponse(error = error))
+            .also { logger.warn(ExceptionUtils.getRootCauseMessage(e)) }
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolationException(e: ConstraintViolationException, request: WebRequest?): ResponseEntity<RestExceptionResponse> {
+        val error = RestExceptionResponse.Error(
+            message = Messages.findByKey("invalid.input.parameter")
+        )
+        error.fields = mutableListOf()
+        for (fe in e.constraintViolations) {
+            error.fields!!.add(RestExceptionResponse.Field(name = fe.propertyPath.toString(), message = fe.message))
+        }
 
         return ResponseEntity.badRequest().body(RestExceptionResponse(error = error))
             .also { logger.warn(ExceptionUtils.getRootCauseMessage(e)) }

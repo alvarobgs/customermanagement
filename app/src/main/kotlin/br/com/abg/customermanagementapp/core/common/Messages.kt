@@ -11,7 +11,7 @@ class Messages {
         }
 
         fun findByKey(key: String): String {
-            return findByKey(key, Language.EN)
+            return findByKey(key, Language.PT)
         }
     }
 
