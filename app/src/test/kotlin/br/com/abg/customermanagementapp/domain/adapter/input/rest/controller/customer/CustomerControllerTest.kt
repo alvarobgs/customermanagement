@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -34,6 +35,7 @@ import java.time.LocalDateTime
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = [Application::class])
 @TestPropertySource(locations = ["classpath:application.yml"])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EmbeddedKafka(partitions = 1, brokerProperties = [ "listeners=PLAINTEXT://localhost:9092", "port=9092" ] )
 class CustomerControllerTest {
 
     @Autowired
