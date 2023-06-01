@@ -18,7 +18,7 @@ class CustomerProducerImpl(
         logger.info("Starting process to send message on kafka topic $topicName")
 
         runCatching {
-            kafkaTemplate.send(topicName, payload)
+            kafkaTemplate.send(topicName, payload).get()
         }.onSuccess {
             logger.info("Successfully sent message on kafka topic $topicName")
         }.onFailure {

@@ -1,6 +1,7 @@
 package br.com.abg.core.configuration.exceptionhandler
 
 import br.com.abg.core.common.Messages
+import br.com.abg.domain.exceptions.InvalidArgumentException
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
@@ -28,6 +29,17 @@ class DefaultExceptionHandler {
 
     private val logger = LoggerFactory.getLogger(DefaultExceptionHandler::class.java)
 
+
+    @ExceptionHandler(InvalidArgumentException::class)
+    fun handleInvalidArgumentException(e: InvalidArgumentException, request: WebRequest?): ResponseEntity<RestExceptionResponse> {
+        val error = RestExceptionResponse.Error(
+            message = Messages.findByKey("invalid.input.parameter"),
+            description = e.message
+        )
+
+        return ResponseEntity.badRequest().body(RestExceptionResponse(error = error))
+            .also { logger.warn(ExceptionUtils.getRootCauseMessage(e)) }
+    }
     @ExceptionHandler(ConversionFailedException::class)
     fun handleConversionFailedException(e: ConversionFailedException, request: WebRequest?): ResponseEntity<RestExceptionResponse> {
         val error = RestExceptionResponse.Error(
@@ -83,8 +95,9 @@ class DefaultExceptionHandler {
 
         val cause = e.cause
         if (Objects.nonNull(cause)) {
+            error.fields = mutableListOf()
             if (cause is UnrecognizedPropertyException) {
-                error.fields.add(
+                error.fields!!.add(
                     RestExceptionResponse.Field(
                         name = cause.propertyName,
                         message = Messages.findByKey("unexpected.attribute")
@@ -94,7 +107,7 @@ class DefaultExceptionHandler {
                 val fieldName = cause.path.stream()
                                           .map { reference: JsonMappingException.Reference -> reference.fieldName + "." }
                                           .collect(Collectors.joining())
-                error.fields.add(
+                error.fields!!.add(
                     RestExceptionResponse.Field(
                         name = fieldName.substring(0, fieldName.length - 1),
                         message = Messages.findByKey("invalid.input.parameter"),
@@ -112,11 +125,12 @@ class DefaultExceptionHandler {
     fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException, request: WebRequest?): ResponseEntity<RestExceptionResponse> {
         val error = RestExceptionResponse.Error(message = Messages.findByKey("invalid.input.parameter"))
 
+        error.fields = mutableListOf()
         for (fe in e.bindingResult.fieldErrors) {
-            error.fields.add(RestExceptionResponse.Field(name = fe.field, message = fe.defaultMessage))
+            error.fields!!.add(RestExceptionResponse.Field(name = fe.field, message = fe.defaultMessage))
         }
         for (oe in e.bindingResult.globalErrors) {
-            error.fields.add(RestExceptionResponse.Field(name = oe.objectName, message = oe.defaultMessage))
+            error.fields!!.add(RestExceptionResponse.Field(name = oe.objectName, message = oe.defaultMessage))
         }
 
         return ResponseEntity.badRequest().body(RestExceptionResponse(error = error))
@@ -127,6 +141,7 @@ class DefaultExceptionHandler {
     fun handleBindException(e: BindException, request: WebRequest?): ResponseEntity<RestExceptionResponse> {
         val error = RestExceptionResponse.Error(message = Messages.findByKey("invalid.input.parameter"))
 
+        error.fields = mutableListOf()
         for (fe in e.bindingResult.fieldErrors) {
             val fieldName = fe.field
             val fieldValue = if (Objects.isNull(fe.rejectedValue)) null else fe.rejectedValue?.toString()
@@ -141,17 +156,8 @@ class DefaultExceptionHandler {
                         }
                         "${Messages.findByKey("use.one.of.the.following")}: $knownValues"
                     } } ?: tme.message
-//                    message = if (Objects.nonNull(tme.requiredType) && Objects.nonNull(tme.requiredType!!.enumConstants) && tme.requiredType!!.enumConstants.isNotEmpty()) {
-//                        for (o in tme.requiredType?.enumConstants!!) {
-//                            knownValues.append(o.toString())
-//                            knownValues.append(";")
-//                        }
-//                        "${Messages.findByKey("use.one.of.the.following")}: $knownValues"
-//                    } else {
-//                        tme.message
-//                    }
             }
-            error.fields.add(RestExceptionResponse.Field(name = fieldName, value = fieldValue, message = message))
+            error.fields!!.add(RestExceptionResponse.Field(name = fieldName, value = fieldValue, message = message))
         }
 
         return ResponseEntity.badRequest().body(RestExceptionResponse(error = error))

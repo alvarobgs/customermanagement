@@ -17,11 +17,6 @@ class FindCustomerUseCase(
     fun execute(document: String): Customer? {
         logger.info("Fetching customer by document $document")
 
-        return try {
-            customerService.findByDocument(document)
-        } catch (e: Exception) { //FIXME alterar para capturar exception correta de not found
-            logger.warn("Customer not found for document $document")
-            null
-        }
+        return customerService.findByDocument(document)
     }
 }

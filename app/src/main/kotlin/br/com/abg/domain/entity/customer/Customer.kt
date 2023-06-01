@@ -8,12 +8,14 @@ import jakarta.persistence.ForeignKey
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
-@Table(name = "tb_customer")
+@Table(name = "tb_customer", indexes = [Index(name = "ix_document", columnList = "document"), Index(name = "ix_name", columnList = "name")])
 class Customer {
 
     @Id
@@ -31,6 +33,9 @@ class Customer {
 
     @Column(name = "born_date", nullable = false)
     var bornDate: LocalDate? = null
+
+    @Column(name = "creation_date", nullable = false)
+    var creationDate: LocalDateTime? = null
 
     @OneToOne(cascade = [ CascadeType.ALL ], orphanRemoval = true)
     @JoinColumn(name = "address_id", foreignKey = ForeignKey(name = "fk_customer_address"))

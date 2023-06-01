@@ -6,5 +6,5 @@ interface CustomerService {
 
     fun persist(customer: Customer): Customer
 
-    fun findByDocument(document: String): Customer
+    fun findByDocument(document: String): Customer?
 }

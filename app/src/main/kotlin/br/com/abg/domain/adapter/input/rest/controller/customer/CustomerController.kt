@@ -7,6 +7,7 @@ import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToCreateCustomerR
 import br.com.abg.domain.adapter.input.rest.mapper.customer.mapToFindCustomerByDocumentResponse
 import br.com.abg.domain.usecase.customer.CreateCustomerUseCase
 import br.com.abg.domain.usecase.customer.FindCustomerUseCase
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -37,7 +38,7 @@ class CustomerController(
 
     @PostMapping(name = "/create")
     fun createCustomer(
-        @RequestBody body: CreateCustomerRequest
+        @RequestBody @Valid body: CreateCustomerRequest
     ): ResponseEntity<CreateCustomerResponse> {
 
         val customer = createCustomerUseCase.execute(body)

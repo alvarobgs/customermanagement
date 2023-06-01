@@ -1,5 +1,6 @@
 package br.com.abg.domain.adapter.input.rest.mapper.customer
 
+import br.com.abg.core.common.API_DATE_PATTERN
 import br.com.abg.domain.adapter.input.rest.controller.customer.model.request.CreateCustomerRequest
 import br.com.abg.domain.adapter.input.rest.controller.customer.model.response.CreateCustomerResponse
 import br.com.abg.domain.adapter.input.rest.controller.customer.model.response.FindCustomerByDocumentResponse
@@ -7,12 +8,15 @@ import br.com.abg.domain.adapter.output.rest.client.zipcodeaddress.model.Address
 import br.com.abg.domain.entity.customer.Address
 import br.com.abg.domain.entity.customer.Customer
 import br.com.abg.kafka.schema.customer.CustomerKafkaPayload
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 
 fun Customer.mapToFindCustomerByDocumentResponse() = FindCustomerByDocumentResponse(
     name = name!!,
     document = document!!,
     bornDate = bornDate!!,
     phone = phone!!,
+    creationDate = creationDate!!,
     address = FindCustomerByDocumentResponse.Address(
         zipCode = address!!.zipCode!!,
         street = address!!.street!!,
@@ -24,12 +28,13 @@ fun Customer.mapToFindCustomerByDocumentResponse() = FindCustomerByDocumentRespo
 )
 
 fun Customer.mapToCreateCustomerResponse() = CreateCustomerResponse(
-    id = id!!
+    id = id!!,
+    creationDate = creationDate!!
 )
 
 fun CreateCustomerRequest.mapToCustomer(addressByZipCode: AddressByZipCodeResponse) : Customer{
     val addr = Address()
-    addr.zipCode = address.zipCode
+    addr.zipCode = address!!.zipCode
     addr.number = address.number
     addr.street = addressByZipCode.logradouro
     addr.neighborhood = addressByZipCode.bairro
@@ -58,7 +63,7 @@ fun Customer.mapToCustomerKafkaPayload() : CustomerKafkaPayload {
 
     val payload = CustomerKafkaPayload()
     payload.name = name
-    payload.bornDate = bornDate.toString() //FIXME criar um conversor
+    payload.bornDate = DateTimeFormatter.ofPattern(API_DATE_PATTERN).format(bornDate)
     payload.phone = phone
     payload.document = document
     payload.address = addr

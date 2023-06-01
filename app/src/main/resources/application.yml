@@ -10,11 +10,11 @@ spring:
     database: MYSQL
     show-sql: false
     open-in-view: true
-    generate-ddl: false
+    generate-ddl: true
     database-platform: org.hibernate.dialect.MySQLDialect
+    ddl-auto: create
     properties:
       hibernate:
-        ddl-auto: update
         format_sql: false
         dialect: org.hibernate.dialect.MySQLDialect
 
@@ -22,21 +22,26 @@ management:
   endpoints.web.exposure.include: metrics,health,info,prometheus
   metrics.export.prometheus.enabled: true
 
-logging.level:
-  org.apache.catalina.core.ContainerBase.*: WARN
-  org.springframework.web.servlet.DispatcherServlet: WARN
-  org.zalando.logbook: TRACE
+logging:
+  format-to-json: false
+  level:
+    org.apache.catalina.core.ContainerBase.*: WARN
+    org.springframework.web.servlet.DispatcherServlet: WARN
+    org.zalando.logbook: TRACE
 
 endpoint:
   zipcode-ws: https://viacep.com.br/ws
 
-spring.kafka.producer:
-  bootstrap-servers: 127.0.0.1:9092
-  key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  group-id: group_id
+spring.kafka:
+  properties:
+      schema.registry.url: http://localhost:8081
+  producer:
+    bootstrap-servers: 127.0.0.1:9092
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    group-id: group_id
 
 kafka:
   topicname:
-    newcustomer: teste
+    newcustomer: newcustomer-event-topic
 
