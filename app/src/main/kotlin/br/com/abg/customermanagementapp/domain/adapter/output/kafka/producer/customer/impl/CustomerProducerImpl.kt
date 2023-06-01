@@ -23,7 +23,7 @@ class CustomerProducerImpl(
         logger.info("Starting process to produce message on kafka topic $topicName")
 
         runCatching {
-            kafkaTemplate.send(topicName, payload).get()
+            kafkaTemplate.send(topicName, payload).get() //FIXME remover o .get() após os testes pois impacta na performance da aplicação. Envio da msg deve ser assíncrono
         }.onSuccess {
             logger.info("Successfully produced message on kafka topic $topicName")
         }.onFailure {
