@@ -13,7 +13,7 @@ import java.time.LocalDate
 @JsonNaming(SnakeCaseStrategy::class)
 data class CreateCustomerRequest(
     @field:NotBlank
-    @field:Pattern(regexp = "[a-zA-Z]{3,100}")
+    @field:Pattern(regexp = "[a-zA-Z .,]{3,100}")
     val name: String?,
     @field:NotBlank
     @field:Pattern(regexp = "[0-9]{11}")
