@@ -40,7 +40,7 @@ fun CreateCustomerRequest.mapToCustomer(addressByZipCode: AddressByZipCodeRespon
     addr.state = addressByZipCode.uf
 
     val customer = Customer()
-    customer.name = name
+    customer.name = name!!.trim()
     customer.bornDate = bornDate
     customer.phone = phone
     customer.document = document
