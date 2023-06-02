@@ -32,7 +32,7 @@ class CreateCustomerUseCase(
             Metrics.counter(metricName, "persistence_status", "error").increment()
             logger.error("Failed to save customer with document ${customer.document}", it)
             if (it.cause is ConstraintViolationException &&
-                (it.cause as ConstraintViolationException).message!!.lowercase().contains("duplicate entry")) {
+                (it.cause as ConstraintViolationException).message!!.lowercase().contains(Regex("duplicate entry|unique index"))) {
                 throw InvalidArgumentException(Messages.findByKey("document.in.use.error"))
             }
         }.getOrThrow()
