@@ -1,6 +1,6 @@
 package br.com.abg.customermanagementapp.domain.service.zipcode
 
-import br.com.abg.customermanagementapp.domain.adapter.output.rest.client.zipcodeaddress.model.AddressByZipCodeResponse
+import br.com.abg.customermanagementapp.infrastructure.adapter.rest.zipcode.model.AddressByZipCodeResponse
 
 interface ZipCodeService {
 

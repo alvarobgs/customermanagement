@@ -9,7 +9,7 @@ Exemplos de request:
 
 # Inclusão de cliente
 
-curl --location 'localhost:8080/customers' \
+curl --location 'localhost:8080/v1/customers' \
 --header 'Content-Type: application/json' \
 --data '{
 "name" : "Alvaro",
@@ -23,7 +23,7 @@ curl --location 'localhost:8080/customers' \
 }'
 
 # Pesquisa de cliente por documento
-curl --location 'localhost:8080/customers?document=12345678901'
+curl --location 'localhost:8080/v1/customers?document=12345678901'
 
 # Métricas do Prometheus
 curl --location 'localhost:8080/actuator/prometheus'

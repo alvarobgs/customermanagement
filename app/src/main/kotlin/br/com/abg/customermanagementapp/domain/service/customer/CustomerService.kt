@@ -1,10 +1,12 @@
 package br.com.abg.customermanagementapp.domain.service.customer
 
-import br.com.abg.customermanagementapp.domain.entity.customer.Customer
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.request.CreateCustomerRequest
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.response.CreateCustomerResponse
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.response.FindCustomerByDocumentResponse
 
 interface CustomerService {
 
-    fun persist(customer: Customer): Customer
+    fun createNewCustomer(request: CreateCustomerRequest): CreateCustomerResponse
 
-    fun findByDocument(document: String): Customer?
+    fun findByDocument(document: String): FindCustomerByDocumentResponse?
 }

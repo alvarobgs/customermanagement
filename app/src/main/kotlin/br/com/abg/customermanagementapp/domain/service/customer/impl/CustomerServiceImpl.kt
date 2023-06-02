@@ -1,35 +1,35 @@
 package br.com.abg.customermanagementapp.domain.service.customer.impl
 
-import br.com.abg.customermanagementapp.domain.entity.customer.Customer
-import br.com.abg.customermanagementapp.domain.repository.customer.CustomerRepository
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.request.CreateCustomerRequest
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.response.CreateCustomerResponse
+import br.com.abg.customermanagementapp.application.adapter.rest.model.customer.v1.response.FindCustomerByDocumentResponse
+import br.com.abg.customermanagementapp.domain.mapper.customer.mapToCreateCustomerResponse
+import br.com.abg.customermanagementapp.domain.mapper.customer.mapToCustomer
+import br.com.abg.customermanagementapp.domain.mapper.customer.mapToCustomerKafkaPayload
+import br.com.abg.customermanagementapp.domain.mapper.customer.mapToFindCustomerByDocumentResponse
 import br.com.abg.customermanagementapp.domain.service.customer.CustomerService
-import io.micrometer.core.instrument.Metrics
-import org.slf4j.LoggerFactory
+import br.com.abg.customermanagementapp.domain.service.zipcode.ZipCodeService
+import br.com.abg.customermanagementapp.domain.usecase.customer.CreateCustomerUseCase
+import br.com.abg.customermanagementapp.domain.usecase.customer.FindCustomerUseCase
+import br.com.abg.customermanagementapp.infrastructure.adapter.event.customer.CustomerEventProducerAdapter
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class CustomerServiceImpl(
-    private val repository: CustomerRepository
+    private val createCustomerUseCase: CreateCustomerUseCase,
+    private val findCustomerUseCase: FindCustomerUseCase,
+    private val customerProducer: CustomerEventProducerAdapter,
+    private val zipCodeService: ZipCodeService
 ) : CustomerService {
+    override fun createNewCustomer(request: CreateCustomerRequest): CreateCustomerResponse {
+        val completeAddress = zipCodeService.fetchAddressByZipCode(request.address!!.zipCode!!)
 
-    private val metricName = "customer-management-new-customer"
-    private val logger = LoggerFactory.getLogger(CustomerServiceImpl::class.java)
-    override fun persist(customer: Customer): Customer {
-        customer.creationDate = LocalDateTime.now()
-
-        return runCatching {
-            repository.save(customer)
-        }.onSuccess {
-            Metrics.counter(metricName, "persistence_status", "success").increment()
-            logger.info("Successfully saved customer with document ${customer.document}")
-        }.onFailure {
-            Metrics.counter(metricName, "persistence_status", "error").increment()
-            logger.error("Failed to save customer with document ${customer.document}")
-        }.getOrThrow()
+        val customer = createCustomerUseCase.execute(request.mapToCustomer(completeAddress))
+        customerProducer.produce(customer.mapToCustomerKafkaPayload())
+        return customer.mapToCreateCustomerResponse()
     }
 
-    override fun findByDocument(document: String): Customer? {
-        return repository.findByDocument(document)
+    override fun findByDocument(document: String): FindCustomerByDocumentResponse? {
+        return findCustomerUseCase.execute(document)?.mapToFindCustomerByDocumentResponse()
     }
 }
